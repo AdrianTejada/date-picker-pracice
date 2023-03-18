@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 
 import { BsChevronLeft } from "react-icons/bs";
@@ -12,7 +12,8 @@ import {
   endOfWeek,
   startOfWeek,
   isToday,
-  isSameMonth
+  isSameMonth,
+  isEqual
 } from 'date-fns';
 
 const Container = styled.div`
@@ -63,6 +64,7 @@ const Days = styled.div`
 type CellProps = {
   isToday: boolean,
   currentMonth: boolean,
+  selectedDay: boolean
 }
 
 const Cell = styled.button<CellProps>`
@@ -74,21 +76,23 @@ const Cell = styled.button<CellProps>`
   padding: 0;
   outline: none;
   border: none;
-  background-color: inherit;
+  background-color: ${({selectedDay})=>selectedDay ? '#333' : 'inherit'};
   font-family: 'Inconsolata';
   font-size: 15px;
-  color: ${(props) => {
-    if (props.isToday) {
+  color: ${({isToday, currentMonth, selectedDay}) => {
+    if (isToday) {
       return '#41AF89'
     } 
-    else if (props.currentMonth) {
+    if (!currentMonth) {
+      return '#E6E6E6'
+    }
+    if (selectedDay) {
+      return '#f6f6f6'
+    }
+    if (currentMonth) {
       return '#333'
-    } 
-    else {
-      return '#898989'
     }
   }};
-  /* background-color: white; */
   border-radius: 50%;
 `;
 
@@ -108,6 +112,8 @@ const Weekday = styled.div`
 
 export const DatePicker = () => {
   let today = startOfToday()
+  const [selectedDay, setSelectedDay] = useState<Date>(today)
+  
 
   let newDays = eachDayOfInterval({start: startOfWeek(startOfMonth(today)), end: endOfWeek(endOfMonth(today))})
 
@@ -130,7 +136,16 @@ export const DatePicker = () => {
     </Week>
 
     <Days>
-      {newDays.map((day)=><Cell isToday={isToday(day)} currentMonth={isSameMonth(day, today)} key={day.toString()}>{format(day, 'd')}</Cell>)}
+      {newDays.map((day)=><Cell 
+          isToday={isToday(day)}
+          currentMonth={isSameMonth(day, today)}
+          selectedDay={isEqual(selectedDay, day)}
+          key={day.toString()}
+          onClick={()=>setSelectedDay(day)}
+        >
+          {format(day, 'd')}
+        </Cell>
+      )}
     </Days>
   </Container>
 }
