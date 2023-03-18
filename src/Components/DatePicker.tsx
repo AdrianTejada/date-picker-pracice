@@ -9,6 +9,10 @@ import {
   eachDayOfInterval,
   startOfMonth,
   endOfMonth,
+  endOfWeek,
+  startOfWeek,
+  isToday,
+  isSameMonth
 } from 'date-fns';
 
 const Container = styled.div`
@@ -49,23 +53,43 @@ const Week = styled.div`
 
 const Days = styled.div`
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   flex-wrap: wrap;
   column-gap: 21px;
-  row-gap: 9px;
+  row-gap: 10px;
 `
 
-const Cell = styled.button`
-  width: 31px;
-  height: 31px;
+type CellProps = {
+  isToday: boolean,
+  currentMonth: boolean,
+}
+
+const Cell = styled.button<CellProps>`
+  min-width: 31px;
+  min-height: 31px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* margin-top: 9px; */
   padding: 0;
   outline: none;
   border: none;
   background-color: inherit;
   font-family: 'Inconsolata';
+  font-size: 15px;
+  color: ${(props) => {
+    if (props.isToday) {
+      return '#41AF89'
+    } 
+    else if (props.currentMonth) {
+      return '#333'
+    } 
+    else {
+      return '#898989'
+    }
+  }};
+  /* background-color: white; */
+  border-radius: 50%;
 `;
 
 const Weekday = styled.div`
@@ -79,12 +103,13 @@ const Weekday = styled.div`
   cursor: default;
   font-weight: 400;
   /* border: 1px solid black; */
+  color: #333;
 `
 
 export const DatePicker = () => {
   let today = startOfToday()
 
-  let newDays = eachDayOfInterval({start: startOfMonth(today), end: endOfMonth(today)})
+  let newDays = eachDayOfInterval({start: startOfWeek(startOfMonth(today)), end: endOfWeek(endOfMonth(today))})
 
   return <Container>
     <Top>
@@ -105,8 +130,7 @@ export const DatePicker = () => {
     </Week>
 
     <Days>
-      {newDays.map((day)=><Cell key={day.toString()}>{format(day, 'd')}</Cell>)}
+      {newDays.map((day)=><Cell isToday={isToday(day)} currentMonth={isSameMonth(day, today)} key={day.toString()}>{format(day, 'd')}</Cell>)}
     </Days>
-    {/* <button onClick={()=>console.log(newDays)}>show days</button> */}
   </Container>
 }
