@@ -13,7 +13,7 @@ import {
 
 const Container = styled.div`
   width: 346px;
-  height: 300px;
+  /* height: 300px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,15 +44,28 @@ const Week = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom:21px;
+  margin-bottom:12px;
 `
 
-const Cell = styled.div`
+const Days = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 21px;
+  row-gap: 9px;
+`
+
+const Cell = styled.button`
   width: 31px;
   height: 31px;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* margin-top: 9px; */
+  padding: 0;
+  outline: none;
+  border: none;
+  background-color: inherit;
+  font-family: 'Inconsolata';
 `;
 
 const Weekday = styled.div`
@@ -90,9 +103,10 @@ export const DatePicker = () => {
       <Weekday>Fr</Weekday>
       <Weekday>Sa</Weekday>
     </Week>
-    <Row>
 
-    </Row>
-    <button onClick={()=>console.log(newDays)}>show days</button>
+    <Days>
+      {newDays.map((day)=><Cell key={day.toString()}>{format(day, 'd')}</Cell>)}
+    </Days>
+    {/* <button onClick={()=>console.log(newDays)}>show days</button> */}
   </Container>
 }
