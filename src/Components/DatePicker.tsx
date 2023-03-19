@@ -14,9 +14,7 @@ import {
   isToday,
   isSameMonth,
   isEqual,
-  getMonth,
   add,
-  sub,
   parse
 } from 'date-fns';
 
@@ -28,6 +26,14 @@ const Container = styled.div`
   background-color: #f6f6f6;
   border-radius: 5px;
   padding: 10px;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+  margin-top: 300px;
 `;
 
 const Top = styled.div`
@@ -98,6 +104,7 @@ const Cell = styled.button<CellProps>`
     }
   }};
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 const Weekday = styled.div`
@@ -119,13 +126,13 @@ export const DatePicker = () => {
 
   const [selectedDay, setSelectedDay] = useState<Date>(today)
   const [selectedMonth, setSelectedMonth] = useState<string>(format(today, 'MMMM yyyy'))
-  const [days, setDays] = useState<Date[]>(eachDayOfInterval({start: startOfWeek(startOfMonth(today)), end: endOfWeek(endOfMonth(today))}))
+  
+  let firstDayCurrentMonth = parse(selectedMonth, 'MMMM yyyy', new Date())
+  let days = eachDayOfInterval({start: startOfWeek(firstDayCurrentMonth), end: endOfWeek(endOfMonth(firstDayCurrentMonth))})
 
-  const changeMonth = (amount: number) => {
-    let firstDayCurrentMonth = parse(selectedMonth, 'MMMM yyyy', new Date())
+  function changeMonth (amount: number) {
     let firstDayNextMonth = add(firstDayCurrentMonth, {months: amount})
     setSelectedMonth(format(firstDayNextMonth, 'MMMM yyyy'))
-    setDays(eachDayOfInterval({start: startOfWeek(startOfMonth(firstDayNextMonth)), end: endOfWeek(endOfMonth(firstDayNextMonth))}))
   }
   
 
@@ -139,20 +146,21 @@ export const DatePicker = () => {
         <Month>
           {selectedMonth}
         </Month>
-      <BsChevronRight 
-        size={20} 
-        color='#333333'
-        onClick={()=>changeMonth(1)}
-      />
+
+          <BsChevronRight 
+            size={20} 
+            color='#333333'
+            onClick={()=>changeMonth(1)}
+          />
     </Top>
     <Week>
-      <Weekday>Su</Weekday>
-      <Weekday>Mo</Weekday>
-      <Weekday>Tu</Weekday>
-      <Weekday>We</Weekday>
-      <Weekday>Th</Weekday>
-      <Weekday>Fr</Weekday>
-      <Weekday>Sa</Weekday>
+      <Weekday>Sun</Weekday>
+      <Weekday>Mon</Weekday>
+      <Weekday>Tue</Weekday>
+      <Weekday>Wed</Weekday>
+      <Weekday>Thu</Weekday>
+      <Weekday>Fri</Weekday>
+      <Weekday>Sat</Weekday>
     </Week>
 
     <Days>
