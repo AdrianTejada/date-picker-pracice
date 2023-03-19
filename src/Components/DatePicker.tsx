@@ -13,17 +13,21 @@ import {
   startOfWeek,
   isToday,
   isSameMonth,
-  isEqual
+  isEqual,
+  getMonth,
+  add,
+  sub,
+  parse
 } from 'date-fns';
 
 const Container = styled.div`
   width: 346px;
-  /* height: 300px; */
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #f6f6f6;
   border-radius: 5px;
+  padding: 10px;
 `;
 
 const Top = styled.div`
@@ -83,11 +87,11 @@ const Cell = styled.button<CellProps>`
     if (isToday) {
       return '#41AF89'
     } 
-    if (!currentMonth) {
-      return '#E6E6E6'
-    }
     if (selectedDay) {
       return '#f6f6f6'
+    }
+    if (!currentMonth) {
+      return '#E6E6E6'
     }
     if (currentMonth) {
       return '#333'
@@ -112,18 +116,34 @@ const Weekday = styled.div`
 
 export const DatePicker = () => {
   let today = startOfToday()
-  const [selectedDay, setSelectedDay] = useState<Date>(today)
-  
 
-  let newDays = eachDayOfInterval({start: startOfWeek(startOfMonth(today)), end: endOfWeek(endOfMonth(today))})
+  const [selectedDay, setSelectedDay] = useState<Date>(today)
+  const [selectedMonth, setSelectedMonth] = useState<string>(format(today, 'MMMM yyyy'))
+  const [days, setDays] = useState<Date[]>(eachDayOfInterval({start: startOfWeek(startOfMonth(today)), end: endOfWeek(endOfMonth(today))}))
+
+  const changeMonth = (amount: number) => {
+    let firstDayCurrentMonth = parse(selectedMonth, 'MMMM yyyy', new Date())
+    let firstDayNextMonth = add(firstDayCurrentMonth, {months: amount})
+    setSelectedMonth(format(firstDayNextMonth, 'MMMM yyyy'))
+    setDays(eachDayOfInterval({start: startOfWeek(startOfMonth(firstDayNextMonth)), end: endOfWeek(endOfMonth(firstDayNextMonth))}))
+  }
+  
 
   return <Container>
     <Top>
-      <BsChevronLeft size={20} color='#333333'/>
+      <BsChevronLeft 
+        size={20} 
+        color='#333333'
+        onClick={()=>changeMonth(-1)}
+      />
         <Month>
-          {format(today, 'MMMM yyyy')}
+          {selectedMonth}
         </Month>
-      <BsChevronRight size={20} color='#333333'/>
+      <BsChevronRight 
+        size={20} 
+        color='#333333'
+        onClick={()=>changeMonth(1)}
+      />
     </Top>
     <Week>
       <Weekday>Su</Weekday>
@@ -136,9 +156,9 @@ export const DatePicker = () => {
     </Week>
 
     <Days>
-      {newDays.map((day)=><Cell 
+      {days.map((day)=><Cell 
           isToday={isToday(day)}
-          currentMonth={isSameMonth(day, today)}
+          currentMonth={isSameMonth(day, parse(selectedMonth, 'MMMM yyyy', new Date()))}
           selectedDay={isEqual(selectedDay, day)}
           key={day.toString()}
           onClick={()=>setSelectedDay(day)}
