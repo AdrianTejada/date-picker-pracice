@@ -32,7 +32,8 @@ const Container = styled.div`
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
-    margin: 5px;
+  
+  margin: 5px;
     margin-top: 300px;
 `;
 
@@ -121,7 +122,7 @@ const Weekday = styled.div`
   color: #333;
 `
 
-export const DatePicker = () => {
+export const WeekPicker = () => {
   let today = startOfToday()
 
   const [selectedDay, setSelectedDay] = useState<Date>(today)
